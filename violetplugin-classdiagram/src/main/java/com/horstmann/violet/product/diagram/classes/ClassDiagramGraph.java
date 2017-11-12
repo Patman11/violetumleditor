@@ -1,5 +1,6 @@
 package com.horstmann.violet.product.diagram.classes;
 
+import com.blackuml.volet.product.constraints.ConstraintVerifierSingleton;
 import java.util.*;
 
 import com.horstmann.violet.product.diagram.abstracts.AbstractGraph;
@@ -21,11 +22,20 @@ import java.awt.geom.Point2D;
  */
 public class ClassDiagramGraph extends AbstractGraph
 {
+    private final ConstraintVerifierSingleton constraints;
+    
+    public ClassDiagramGraph() {
+        super();
+        constraints = ConstraintVerifierSingleton.getInstance();
+    }
+    
+    @Override
     public List<INode> getNodePrototypes()
     {
         return NODE_PROTOTYPES;
     }
 
+    @Override
     public List<IEdge> getEdgePrototypes()
     {
         return EDGE_PROTOTYPES;
@@ -69,9 +79,9 @@ public class ClassDiagramGraph extends AbstractGraph
         e.setEndNode(end);
         e.setEndLocation(endLocation);
         e.setTransitionPoints(transitionPoints);
-        if (start instanceof ColorableNode) {
-            ((ColorableNode) start).setBackgroundColor(Color.red);
-        }
+//        if (start instanceof ColorableNode) {
+//            ((ColorableNode) start).setBackgroundColor(Color.red);
+//        }
         if (null != start && start.addConnection(e))
         {
             e.setId(new Id());
@@ -81,6 +91,14 @@ public class ClassDiagramGraph extends AbstractGraph
             if(end != null)
             {
                 end.onConnectedEdge(e);
+            }
+            if (constraints.isConstrainedEdge(e)) {
+                if (start instanceof ColorableNode) {
+                    ((ColorableNode) start).setBackgroundColor(Color.BLUE);
+                }
+                if (end instanceof ColorableNode) {
+                    ((ColorableNode) end).setBackgroundColor(Color.MAGENTA);
+                }
             }
 
             return true;
