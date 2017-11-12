@@ -43,17 +43,18 @@ public class ConstraintVerifierSingleton {
     }
     
     private void checkForProblems(ConstrainedEdge newConstrainedEdge) {
-        for (ConstrainedEdge edge : CONSTRAINED_EDGES) {
-            if (edge.getClass().equals(newConstrainedEdge.getClass())) {
-                if (!edge.getEdge().getId().getValue().equals(newConstrainedEdge.getEdge().getId().getValue())) {
-                    if (newConstrainedEdge.getStartNode().getId().getValue().equals(edge.getEndNode().getId().getValue())
-                            && newConstrainedEdge.getEndNode().getId().getValue().equals(edge.getStartNode().getId().getValue())) {
-                        newConstrainedEdge.getStartNode().setBackgroundColor(PROBLEM_COLOR);
-                        newConstrainedEdge.getEndNode().setBackgroundColor(PROBLEM_COLOR);
-                    }                            
-                }
-            }
-        }
+        CONSTRAINED_EDGES.stream().filter((edge) ->
+        (edge.getClass().equals(newConstrainedEdge.getClass()))).filter((edge) ->
+        (!edge.getEdge().getId().equals(newConstrainedEdge.getEdge().getId()))).filter((edge) ->
+        (newConstrainedEdge.getStartNode().getId().equals(edge.getEndNode().getId())
+        && newConstrainedEdge.getEndNode().getId().equals(edge.getStartNode().getId()))).map((_item) -> {
+            return _item;
+        }).forEachOrdered((_item) -> {
+            newConstrainedEdge.getEndNode().setBackgroundColor(PROBLEM_COLOR);
+            newConstrainedEdge.getStartNode().setBackgroundColor(PROBLEM_COLOR);
+            newConstrainedEdge.setProblematic(_item.getEdge().getId());
+            _item.setProblematic(newConstrainedEdge.getEdge().getId());
+        });
     }
     
     /**

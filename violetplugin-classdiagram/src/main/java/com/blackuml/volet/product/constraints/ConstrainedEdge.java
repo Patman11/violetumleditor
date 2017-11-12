@@ -1,5 +1,6 @@
 package com.blackuml.volet.product.constraints;
 
+import com.horstmann.violet.product.diagram.abstracts.Id;
 import com.horstmann.violet.product.diagram.abstracts.edge.IEdge;
 import com.horstmann.violet.product.diagram.abstracts.node.ColorableNode;
 
@@ -15,6 +16,7 @@ public class ConstrainedEdge {
      */
     public ConstrainedEdge(IEdge edge) {
         this.edge = edge;
+        isProblematicWithID = null;
         startNode = null;
         endNode = null;
         if (edge.getStartNode() instanceof ColorableNode) {
@@ -49,6 +51,31 @@ public class ConstrainedEdge {
         return endNode;
     }
     
+    /**
+     * Tests to see if this edge is problematic
+     * @return boolean
+     */
+    public boolean isProblematic() {
+        return isProblematicWithID != null;
+    }
+    
+    /**
+     * Set this edge to be problematic if it should be
+     * @param isProblematicWithID
+     */
+    public void setProblematic(Id isProblematicWithID) {
+        this.isProblematicWithID = isProblematicWithID;
+    }
+    
+    /**
+     * If another edge got deleted and the problem got cleared
+     * call this function to reset the problematic status
+     */
+    public void clearProblematic() {
+        this.isProblematicWithID = null;
+    }
+    
     private final IEdge edge;
     private ColorableNode startNode, endNode;
+    private Id isProblematicWithID;
 }

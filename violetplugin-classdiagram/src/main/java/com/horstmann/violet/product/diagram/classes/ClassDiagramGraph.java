@@ -93,7 +93,6 @@ public class ClassDiagramGraph extends AbstractGraph
                 end.onConnectedEdge(e);
             }
             constraints.addEdge(e);
-
             return true;
         }
 
