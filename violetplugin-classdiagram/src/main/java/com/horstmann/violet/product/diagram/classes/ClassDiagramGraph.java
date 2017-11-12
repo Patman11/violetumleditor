@@ -92,14 +92,7 @@ public class ClassDiagramGraph extends AbstractGraph
             {
                 end.onConnectedEdge(e);
             }
-            if (constraints.isConstrainedEdge(e)) {
-                if (start instanceof ColorableNode) {
-                    ((ColorableNode) start).setBackgroundColor(Color.BLUE);
-                }
-                if (end instanceof ColorableNode) {
-                    ((ColorableNode) end).setBackgroundColor(Color.MAGENTA);
-                }
-            }
+            constraints.addEdge(e);
 
             return true;
         }
