@@ -31,7 +31,7 @@ public class Login {
 	//Create the login window
 	private void createLogin() {
 		frame = new JFrame();
-		frame.setSize(500,500);
+		frame.setSize(300,300);
 		frame.getContentPane().setLayout(null);
 		
 		JLabel userLabel = new JLabel("UserName:");
