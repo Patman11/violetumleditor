@@ -34,6 +34,8 @@ import java.util.List;
 import com.horstmann.violet.product.diagram.abstracts.edge.IEdge;
 import com.horstmann.violet.product.diagram.abstracts.node.INode;
 import com.horstmann.violet.product.diagram.common.node.NoteNode;
+import com.horstmann.violet.product.diagram.abstracts.node.ColorableNode;
+import java.awt.Color;
 
 /**
  * A graph consisting of selectable node and edges.
@@ -224,6 +226,14 @@ public abstract class AbstractGraph implements Serializable, Cloneable, IGraph
     {
         return Collections.unmodifiableCollection(edges);
     }
+    
+    /**
+     * Returns a modifiable version of edges
+     * @return {ArrayList} edges 
+     */
+    protected ArrayList<IEdge> getEdges() {
+        return edges;
+    }
 
     @Override
     public boolean addNode(INode newNode, Point2D p)
@@ -312,6 +322,9 @@ public abstract class AbstractGraph implements Serializable, Cloneable, IGraph
         e.setEndNode(end);
         e.setEndLocation(endLocation);
         e.setTransitionPoints(transitionPoints);
+        if (start instanceof ColorableNode) {
+            ((ColorableNode) start).setBackgroundColor(Color.yellow);
+        }
         if (null != start && start.addConnection(e))
         {
             e.setId(new Id());
