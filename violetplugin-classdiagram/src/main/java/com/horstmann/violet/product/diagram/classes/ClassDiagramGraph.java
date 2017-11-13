@@ -98,4 +98,18 @@ public class ClassDiagramGraph extends AbstractGraph
 
         return false;
     }
+    
+    @Override
+    public void removeEdge(IEdge... edgesToRemove)
+    {
+        for (IEdge anEdgeToRemove : edgesToRemove)
+        {
+            INode startingNode = anEdgeToRemove.getStartNode();
+            INode endingNode = anEdgeToRemove.getEndNode();
+            startingNode.removeConnection(anEdgeToRemove);
+            endingNode.removeConnection(anEdgeToRemove);
+            constraints.removeEdge(anEdgeToRemove.getId());
+            super.getEdges().remove(anEdgeToRemove);
+        }
+    }
 }

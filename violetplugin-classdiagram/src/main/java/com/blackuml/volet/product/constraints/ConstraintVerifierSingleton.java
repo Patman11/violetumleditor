@@ -1,5 +1,6 @@
 package com.blackuml.volet.product.constraints;
 
+import com.horstmann.violet.product.diagram.abstracts.Id;
 import com.horstmann.violet.product.diagram.abstracts.edge.IEdge;
 import com.horstmann.violet.product.diagram.classes.edge.AggregationEdge;
 import java.awt.Color;
@@ -13,7 +14,9 @@ import java.util.List;
  */
 public class ConstraintVerifierSingleton {
     
-    private static final Color PROBLEM_COLOR = Color.yellow;
+    private static final Color PROBLEM_COLOR = Color.yellow;    
+    private static final Color GOOD_COLOR = Color.white;
+
     
     private final List<IEdge> CONSTRAINED_EDGES_PROTOTYPES;
     private final List<ConstrainedEdge> CONSTRAINED_EDGES;
@@ -26,6 +29,25 @@ public class ConstraintVerifierSingleton {
     
     private boolean isConstrainedEdge(IEdge e) {
         return CONSTRAINED_EDGES_PROTOTYPES.stream().anyMatch((prototype) -> (e.getClass().equals(prototype.getClass())));
+    }
+    
+    public void removeEdge(Id id) {
+        outerloop:
+        for (ConstrainedEdge edgeToRemove : CONSTRAINED_EDGES) {
+            if (id.equals(edgeToRemove.getEdge().getId())) {
+                if (edgeToRemove.isProblematic()) {
+                    for (ConstrainedEdge edgeToClear : CONSTRAINED_EDGES) {
+                        if (edgeToRemove.getEdge().getId().equals(edgeToClear.getEdge().getId())) {
+                            edgeToClear.getStartNode().setBackgroundColor(GOOD_COLOR);
+                            edgeToClear.getEndNode().setBackgroundColor(GOOD_COLOR);
+                            edgeToClear.clearProblematic();
+                            break outerloop; //this was added after commenting the buggy line, it's not the cause of the bug
+                        }
+                    }
+                }
+                //CONSTRAINED_EDGES.remove(edgeToRemove); //this line causes a bug, List may be deleting the object as well (how to prevent that)
+            }
+        }
     }
     
     /**
