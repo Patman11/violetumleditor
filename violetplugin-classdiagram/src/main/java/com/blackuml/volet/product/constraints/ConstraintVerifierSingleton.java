@@ -3,6 +3,7 @@ package com.blackuml.volet.product.constraints;
 import com.horstmann.violet.product.diagram.abstracts.Id;
 import com.horstmann.violet.product.diagram.abstracts.edge.IEdge;
 import com.horstmann.violet.product.diagram.classes.edge.AggregationEdge;
+import com.horstmann.violet.product.diagram.classes.edge.CompositionEdge;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +24,8 @@ public class ConstraintVerifierSingleton {
     
     private ConstraintVerifierSingleton() {
         CONSTRAINED_EDGES_PROTOTYPES = new ArrayList<>(Arrays.asList(
-        new AggregationEdge()));
+        new AggregationEdge(),
+        new CompositionEdge()));
         CONSTRAINED_EDGES = new ArrayList<>();
     }
     
