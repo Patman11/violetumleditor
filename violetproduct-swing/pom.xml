@@ -53,6 +53,16 @@
 			<artifactId>violetplugin-objectdiagram</artifactId>
 			<version>${applicationVersion}</version>
 		</dependency>
+	 <dependency>
+	  <groupId>jcommon</groupId>
+	  <artifactId>jcommon</artifactId>
+	  <version>0.9.5</version>
+	 </dependency>
+	 <dependency>
+	  <groupId>jfreechart</groupId>
+	  <artifactId>jfreechart</artifactId>
+	  <version>1.0.0</version>
+	 </dependency>
 	</dependencies>
 	<build>
 		<finalName>violetumleditor-${project.version}</finalName>
