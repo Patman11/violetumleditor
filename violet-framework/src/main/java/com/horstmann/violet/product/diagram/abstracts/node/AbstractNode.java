@@ -18,7 +18,6 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
 package com.horstmann.violet.product.diagram.abstracts.node;
 
 import java.awt.*;
@@ -35,16 +34,17 @@ import com.horstmann.violet.product.diagram.abstracts.Direction;
 import com.horstmann.violet.product.diagram.abstracts.IGraph;
 import com.horstmann.violet.product.diagram.abstracts.Id;
 import com.horstmann.violet.product.diagram.abstracts.edge.IEdge;
+import java.util.Objects;
 
 /**
  * A class that supplies convenience implementations for a number of methods in the Node interface
- * 
+ *
  * @author Cay Horstmann
  */
-public abstract class AbstractNode implements INode
-{
-    private static class NodeGraph extends AbstractGraph
-    {
+public abstract class AbstractNode implements INode {
+
+    private static class NodeGraph extends AbstractGraph {
+
         @Override
         public List<INode> getNodePrototypes() {
             return new ArrayList<INode>();
@@ -69,10 +69,8 @@ public abstract class AbstractNode implements INode
     /**
      * copy Constructs
      */
-    protected AbstractNode(AbstractNode node) throws CloneNotSupportedException
-    {
-        if (null == node)
-        {
+    protected AbstractNode(AbstractNode node) throws CloneNotSupportedException {
+        if (null == node) {
             throw new CloneNotSupportedException("node can't be null");
         }
         this.id = node.getId().clone();
@@ -87,26 +85,22 @@ public abstract class AbstractNode implements INode
     }
 
     @Override
-    public final void reconstruction()
-    {
+    public final void reconstruction() {
         beforeReconstruction();
         createContentStructure();
         afterReconstruction();
     }
 
-    protected void beforeReconstruction()
-    {
+    protected void beforeReconstruction() {
     }
 
-    protected void afterReconstruction()
-    {
+    protected void afterReconstruction() {
         getContent().refresh();
     }
 
     @Override
 //    public AbstractNode clone(){
-    public final AbstractNode clone()
-    {
+    public final AbstractNode clone() {
         try {
             return (AbstractNode) copy();
         } catch (CloneNotSupportedException e) {
@@ -114,33 +108,30 @@ public abstract class AbstractNode implements INode
         }
     }
 
-    protected INode copy() throws CloneNotSupportedException
-    {
+    protected INode copy() throws CloneNotSupportedException {
         throw new CloneNotSupportedException("You can't clone abstract class");
     }
 
     @Override
-    public String getToolTip()
-    {
+    public String getToolTip() {
         return "";
     }
 
     protected abstract void createContentStructure();
 
     @Override
-    public void draw(Graphics2D graphics)
-    {
+    public void draw(Graphics2D graphics) {
         getContent().draw(graphics, getLocationOnGraph());
     }
 
     @Override
-    public Rectangle2D getBounds()
-    {
+    public Rectangle2D getBounds() {
         Point2D location = getLocation();
         Rectangle2D contentBounds = getContent().getBounds();
         return new Rectangle2D.Double(location.getX(), location.getY(), contentBounds.getWidth(), contentBounds.getHeight());
     }
 
+    @Override
     public boolean contains(Point2D p) {
         return getContent().contains(p);
     }
@@ -148,8 +139,7 @@ public abstract class AbstractNode implements INode
     /**
      * @return currently connected edges
      */
-    protected List<IEdge> getConnectedEdges()
-    {
+    protected List<IEdge> getConnectedEdges() {
         List<IEdge> connectedEdges = new ArrayList<IEdge>();
         IGraph currentGraph = getGraph();
         for (IEdge anEdge : currentGraph.getAllEdges()) {
@@ -167,11 +157,8 @@ public abstract class AbstractNode implements INode
         return this.location;
     }
 
-
-
     @Override
-    public Point2D getLocationOnGraph()
-    {
+    public Point2D getLocationOnGraph() {
         INode parentNode = getParent();
         if (parentNode == null) {
             return getLocation();
@@ -184,8 +171,7 @@ public abstract class AbstractNode implements INode
     }
 
     @Override
-    public void setLocation(Point2D point)
-    {
+    public void setLocation(Point2D point) {
         if (null == point) {
             throw new NullPointerException("Location can't be null");
         }
@@ -220,13 +206,14 @@ public abstract class AbstractNode implements INode
      * @param edge
      * @return ordered list of edges
      */
-    private List<IEdge> getEdgesOnSameSide(IEdge edge)
-    {
+    private List<IEdge> getEdgesOnSameSide(IEdge edge) {
         // Step 1 : look for edges
         List<IEdge> result = new ArrayList<IEdge>();
         Direction d = edge.getDirection(this);
 
-        if (d == null) return result;
+        if (d == null) {
+            return result;
+        }
         Direction cardinalDirectionToSearch = d.getNearestCardinalDirection();
         for (IEdge anEdge : getConnectedEdges()) {
             Direction edgeDirection = anEdge.getDirection(this);
@@ -267,9 +254,7 @@ public abstract class AbstractNode implements INode
         return result;
     }
 
-
-    public Point2D getConnectionPoint(IEdge edge)
-    {
+    public Point2D getConnectionPoint(IEdge edge) {
         List<IEdge> edgesOnSameSide = getEdgesOnSameSide(edge);
         int position = edgesOnSameSide.indexOf(edge);
         int size = edgesOnSameSide.size();
@@ -281,26 +266,19 @@ public abstract class AbstractNode implements INode
         double y = startingNodeLocation.getY();
 
         Direction nearestCardinalDirection = edgeDirection.getNearestCardinalDirection();
-        if (Direction.NORTH.equals(nearestCardinalDirection))
-        {
+        if (Direction.NORTH.equals(nearestCardinalDirection)) {
             x += getContent().getWidth() - (getContent().getWidth() / (size + 1)) * (position + 1);
             y += getContent().getHeight();
-        }
-        else if (Direction.SOUTH.equals(nearestCardinalDirection))
-        {
+        } else if (Direction.SOUTH.equals(nearestCardinalDirection)) {
             x += getContent().getWidth() - (getContent().getWidth() / (size + 1)) * (position + 1);
-        }
-        else if (Direction.EAST.equals(nearestCardinalDirection))
-        {
+        } else if (Direction.EAST.equals(nearestCardinalDirection)) {
             y += getContent().getHeight() - (getContent().getHeight() / (size + 1)) * (position + 1);
-        }
-        else if (Direction.WEST.equals(nearestCardinalDirection))
-        {
+        } else if (Direction.WEST.equals(nearestCardinalDirection)) {
             x += getContent().getWidth();
             y += getContent().getHeight() - (getContent().getHeight() / (size + 1)) * (position + 1);
         }
         Point2D p = new Point2D.Double(x, y);
-		return p;
+        return p;
     }
 
     @Override
@@ -329,8 +307,7 @@ public abstract class AbstractNode implements INode
     }
 
     @Override
-    public boolean addConnection(IEdge edge)
-    {
+    public boolean addConnection(IEdge edge) {
         return edge.getEndNode() != null;
     }
 
@@ -339,15 +316,15 @@ public abstract class AbstractNode implements INode
     }
 
     @Override
-    public void removeChild(INode node)
-    {
-        if (node.getParent() != this) return;
+    public void removeChild(INode node) {
+        if (node.getParent() != this) {
+            return;
+        }
         getChildren().remove(node);
     }
 
     @Override
-    public boolean addChild(INode node, Point2D point)
-    {
+    public boolean addChild(INode node, Point2D point) {
         return false;
     }
 
@@ -357,14 +334,11 @@ public abstract class AbstractNode implements INode
     }
 
     @Override
-    public List<INode> getParents()
-    {
+    public List<INode> getParents() {
         List<INode> parents = new ArrayList<INode>();
-        if(null != getParent())
-        {
+        if (null != getParent()) {
             parents.add(getParent());
-            while (null != parents.get(0).getParent())
-            {
+            while (null != parents.get(0).getParent()) {
                 parents.add(0, parents.get(0).getParent());
             }
         }
@@ -372,85 +346,92 @@ public abstract class AbstractNode implements INode
     }
 
     @Override
-    public void setParent(INode node)
-    {
+    public void setParent(INode node) {
         parent = node;
     }
 
     @Override
-    public List<INode> getChildren()
-    {
-    	return children;
+    public List<INode> getChildren() {
+        return children;
     }
 
     @Override
-    public boolean addChild(INode node, int index)
-    {
+    public boolean addChild(INode node, int index) {
         INode oldParent = node.getParent();
-        if (oldParent != null) oldParent.removeChild(node);
+        if (oldParent != null) {
+            oldParent.removeChild(node);
+        }
         getChildren().add(index, node);
         node.setParent(this);
         node.setGraph(getGraph());
         return true;
     }
 
-    public void onConnectedEdge(IEdge connectedEdge)
-    {}
+    public void onConnectedEdge(IEdge connectedEdge) {
+    }
 
     /**
      * @return the shape to be used for computing the drop shadow
      */
-    public Shape getShape()
-    {
+    public Shape getShape() {
         return new Rectangle2D.Double(0, 0, 0, 0);
     }
 
     @Override
-    public int getZ()
-    {
+    public int getZ() {
         return z;
     }
 
     @Override
-    public void setZ(int z)
-    {
+    public void setZ(int z) {
         this.z = z;
     }
 
     @Override
-    public void setGraph(IGraph graph)
-    {
-        if(null == graph)
-        {
+    public void setGraph(IGraph graph) {
+        if (null == graph) {
             throw new NullPointerException("Graph can't be null");
         }
         this.graph = graph;
         for (INode aChild : getChildren()) {
-        	aChild.setGraph(graph);
+            aChild.setGraph(graph);
         }
     }
 
     @Override
-    public IGraph getGraph()
-    {
-        if(null == graph)
-        {
+    public IGraph getGraph() {
+        if (null == graph) {
             return new NodeGraph();
         }
-    	return this.graph;
+        return this.graph;
     }
 
-    public final Content getContent()
-    {
-        if(null == content)
-        {
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 61 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
+        if (o instanceof AbstractNode) {
+            return id.equals(((AbstractNode) o).getId());
+        }
+        return false;
+    }
+
+    public final Content getContent() {
+        if (null == content) {
             reconstruction();
         }
         return content;
     }
 
-    protected final void setContent(Content content)
-    {
+    protected final void setContent(Content content) {
         this.content = content;
     }
 
@@ -459,10 +440,14 @@ public abstract class AbstractNode implements INode
     private transient IGraph graph;
     private transient int z;
 
-    /** Node's current id (unique in all the graph) */
+    /**
+     * Node's current id (unique in all the graph)
+     */
     private Id id;
 
-    /** Node's current revision */
+    /**
+     * Node's current revision
+     */
     private Integer revision;
 
     private List<INode> children;

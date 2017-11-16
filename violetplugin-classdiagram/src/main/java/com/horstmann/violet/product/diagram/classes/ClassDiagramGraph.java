@@ -1,12 +1,11 @@
 package com.horstmann.violet.product.diagram.classes;
 
-import com.blackuml.volet.product.constraints.ConstraintVerifierSingleton;
+import com.blackuml.volet.product.constraints.ConstraintVerifier;
 import java.util.*;
 
 import com.horstmann.violet.product.diagram.abstracts.AbstractGraph;
 import com.horstmann.violet.product.diagram.abstracts.Id;
 import com.horstmann.violet.product.diagram.abstracts.edge.IEdge;
-import com.horstmann.violet.product.diagram.abstracts.node.ColorableNode;
 import com.horstmann.violet.product.diagram.abstracts.node.INode;
 
 import com.horstmann.violet.product.diagram.classes.edge.*;
@@ -14,30 +13,27 @@ import com.horstmann.violet.product.diagram.classes.node.*;
 
 import com.horstmann.violet.product.diagram.common.edge.NoteEdge;
 import com.horstmann.violet.product.diagram.common.node.NoteNode;
-import java.awt.Color;
 import java.awt.geom.Point2D;
 
 /**
  * A UML class diagram.
  */
-public class ClassDiagramGraph extends AbstractGraph
-{
-    private final ConstraintVerifierSingleton constraints;
-    
+public class ClassDiagramGraph extends AbstractGraph {
+
+    private final ConstraintVerifier constraintVerifier;
+
     public ClassDiagramGraph() {
         super();
-        constraints = ConstraintVerifierSingleton.getInstance();
+        constraintVerifier = new ConstraintVerifier(super.getAllEdges());
     }
-    
+
     @Override
-    public List<INode> getNodePrototypes()
-    {
+    public List<INode> getNodePrototypes() {
         return NODE_PROTOTYPES;
     }
 
     @Override
-    public List<IEdge> getEdgePrototypes()
-    {
+    public List<IEdge> getEdgePrototypes() {
         return EDGE_PROTOTYPES;
     }
 
@@ -59,18 +55,15 @@ public class ClassDiagramGraph extends AbstractGraph
             new CompositionEdge(),
             new NoteEdge()
     ));
-    
+
     @Override
-    public boolean connect(IEdge e, INode start, Point2D startLocation, INode end, Point2D endLocation, Point2D[] transitionPoints)
-    {
+    public boolean connect(IEdge e, INode start, Point2D startLocation, INode end, Point2D endLocation, Point2D[] transitionPoints) {
         // Step 1 : find if node exist
         Collection<INode> allNodes = getAllNodes();
-        if (start != null && !allNodes.contains(start))
-        {
+        if (start != null && !allNodes.contains(start)) {
             addNode(start, start.getLocation());
         }
-        if (end != null && !allNodes.contains(end))
-        {
+        if (end != null && !allNodes.contains(end)) {
             addNode(end, end.getLocation());
         }
 
@@ -82,33 +75,28 @@ public class ClassDiagramGraph extends AbstractGraph
 //        if (start instanceof ColorableNode) {
 //            ((ColorableNode) start).setBackgroundColor(Color.red);
 //        }
-        if (null != start && start.addConnection(e))
-        {
+        if (null != start && start.addConnection(e)) {
             e.setId(new Id());
             super.getEdges().add(e);
 
             start.onConnectedEdge(e);
-            if(end != null)
-            {
+            if (end != null) {
                 end.onConnectedEdge(e);
             }
-            constraints.addEdge(e);
+            constraintVerifier.verifyEdge(e);
             return true;
         }
 
         return false;
     }
-    
+
     @Override
-    public void removeEdge(IEdge... edgesToRemove)
-    {
-        for (IEdge anEdgeToRemove : edgesToRemove)
-        {
+    public void removeEdge(IEdge... edgesToRemove) {
+        for (IEdge anEdgeToRemove : edgesToRemove) {
             INode startingNode = anEdgeToRemove.getStartNode();
             INode endingNode = anEdgeToRemove.getEndNode();
             startingNode.removeConnection(anEdgeToRemove);
             endingNode.removeConnection(anEdgeToRemove);
-            constraints.removeEdge(anEdgeToRemove.getId());
             super.getEdges().remove(anEdgeToRemove);
         }
     }

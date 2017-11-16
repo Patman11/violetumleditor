@@ -45,8 +45,12 @@ public class Id
     @Override
     public boolean equals(Object obj)
     {
-        if (obj == null) return false;
-        if (value != null) return value.equals(((Id) obj).value);
+        if (obj == null) {
+            return false;
+        }
+        if (obj instanceof Id) {
+            return value.equals(((Id) obj).getValue());
+        }
         return false;
     }
 
