@@ -48,13 +48,11 @@ public class ConstraintVerifier {
             }
         }
     }
-
+    
     private boolean bidirectionalEdge(IEdge e) {
         INode start = e.getStartNode(), end = e.getEndNode();
-        Class<?> eClass = e.getClass();
-        return GRAPH_EDGES.stream().anyMatch((edge) ->
-                (!edge.getId().equals(e.getId()) &&
-                edge.getClass().equals(eClass) &&
+        return GRAPH_EDGES.stream().anyMatch((edge) -> (!edge.getId().equals(e.getId()) &&
+                (edge.getClass().equals(AggregationEdge.class) || edge.getClass().equals(CompositionEdge.class)) &&
                 edge.getStartNode().getId().equals(end.getId()) &&
                 edge.getEndNode().getId().equals(start.getId())));
     }
