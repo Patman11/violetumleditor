@@ -48,10 +48,6 @@ public class ConstraintVerifier {
             }
         }
     }
-    
-    public void removeEdge(IEdge e) {
-        
-    }
 
     private boolean bidirectionalEdge(IEdge e) {
         INode start = e.getStartNode(), end = e.getEndNode();
