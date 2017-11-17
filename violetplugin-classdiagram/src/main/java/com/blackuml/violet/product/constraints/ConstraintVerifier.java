@@ -1,4 +1,4 @@
-package com.blackuml.volet.product.constraints;
+package com.blackuml.violet.product.constraints;
 
 import com.horstmann.violet.product.diagram.abstracts.edge.IEdge;
 import com.horstmann.violet.product.diagram.abstracts.node.ColorableNode;

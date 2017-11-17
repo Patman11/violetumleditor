@@ -1,6 +1,6 @@
 package com.horstmann.violet.product.diagram.classes;
 
-import com.blackuml.volet.product.constraints.ConstraintVerifier;
+import com.blackuml.violet.product.constraints.ConstraintVerifier;
 import java.util.*;
 
 import com.horstmann.violet.product.diagram.abstracts.AbstractGraph;
