@@ -31,7 +31,11 @@ public class ConstraintVerifier {
     private boolean isConstrainedEdge(IEdge e) {
         return CONSTRAINED_EDGES_PROTOTYPES.stream().anyMatch((edge) -> (edge.getClass().equals(e.getClass())));
     }
-
+    
+    /**
+     * Checks to see if this edge is problematic
+     * @param e 
+     */
     public void verifyEdge(IEdge e) {
         if (isConstrainedEdge(e)) {
             if (e instanceof CompositionEdge || e instanceof AggregationEdge) {
@@ -43,6 +47,10 @@ public class ConstraintVerifier {
                 }
             }
         }
+    }
+    
+    public void removeEdge(IEdge e) {
+        
     }
 
     private boolean bidirectionalEdge(IEdge e) {
