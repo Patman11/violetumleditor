@@ -5,6 +5,7 @@ import com.horstmann.violet.product.diagram.abstracts.node.ColorableNode;
 import com.horstmann.violet.product.diagram.abstracts.node.INode;
 import com.horstmann.violet.product.diagram.classes.edge.AggregationEdge;
 import com.horstmann.violet.product.diagram.classes.edge.CompositionEdge;
+import com.horstmann.violet.product.diagram.classes.edge.InheritanceEdge;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +25,8 @@ public class ConstraintVerifier {
     public ConstraintVerifier(Collection<IEdge> GRAPH_EDGES) {
         CONSTRAINED_EDGES_PROTOTYPES = new ArrayList<>(Arrays.asList(
                 new AggregationEdge(),
-                new CompositionEdge()));
+                new CompositionEdge(),
+                new InheritanceEdge()));
         this.GRAPH_EDGES = GRAPH_EDGES;
     }
 
@@ -39,21 +41,38 @@ public class ConstraintVerifier {
     public void verifyEdge(IEdge e) {
         if (isConstrainedEdge(e)) {
             if (e instanceof CompositionEdge || e instanceof AggregationEdge) {
-                if (bidirectionalEdge(e)) {
-                    ((ColorableNode) e.getStartNode()).setBackgroundColor(PROBLEM_COLOR);
-                    ((ColorableNode) e.getStartNode()).setBorderColor(PROBLEM_COLOR_BORDER);
-                    ((ColorableNode) e.getEndNode()).setBackgroundColor(PROBLEM_COLOR);
-                    ((ColorableNode) e.getEndNode()).setBorderColor(PROBLEM_COLOR_BORDER);
+                if (bidirectionalCAEdge(e)) {
+                    colorNodesOfEdge(e);
+                }
+            }
+            if (e instanceof InheritanceEdge) {
+                if (bidirectionalInheritanceEdge(e)) {
+                    colorNodesOfEdge(e);
                 }
             }
         }
     }
     
-    private boolean bidirectionalEdge(IEdge e) {
+    private boolean bidirectionalCAEdge(IEdge e) {
         INode start = e.getStartNode(), end = e.getEndNode();
         return GRAPH_EDGES.stream().anyMatch((edge) -> (!edge.getId().equals(e.getId()) &&
                 (edge.getClass().equals(AggregationEdge.class) || edge.getClass().equals(CompositionEdge.class)) &&
                 edge.getStartNode().getId().equals(end.getId()) &&
                 edge.getEndNode().getId().equals(start.getId())));
+    }
+    
+    private boolean bidirectionalInheritanceEdge(IEdge e) {
+        INode start = e.getStartNode(), end = e.getEndNode();
+        return GRAPH_EDGES.stream().anyMatch((edge) -> (!edge.getId().equals(e.getId()) &&
+                e.getClass().equals(InheritanceEdge.class) &&
+                edge.getStartNode().getId().equals(end.getId()) &&
+                edge.getEndNode().getId().equals(start.getId())));
+    }
+    
+    private void colorNodesOfEdge(IEdge e) {
+        ((ColorableNode) e.getStartNode()).setBackgroundColor(PROBLEM_COLOR);
+        ((ColorableNode) e.getStartNode()).setBorderColor(PROBLEM_COLOR_BORDER);
+        ((ColorableNode) e.getEndNode()).setBackgroundColor(PROBLEM_COLOR);
+        ((ColorableNode) e.getEndNode()).setBorderColor(PROBLEM_COLOR_BORDER);
     }
 }
