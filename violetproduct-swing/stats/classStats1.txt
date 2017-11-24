@@ -1,0 +1,6 @@
+nozzle:2,0,0
+pump:4,0,1
+display:5,0,2
+car:5,0,0
+receipt:2,0,4
+station:3,0,0

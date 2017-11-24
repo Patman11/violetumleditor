@@ -67,7 +67,7 @@ public class DocumentMenu extends JMenu
           @Override
           public void actionPerformed(ActionEvent e)
           {
-           GeneratePieChart pieChart = new GeneratePieChart();   
+        	  	GeneratePieChart pieChart = new GeneratePieChart(activeWorkspace.getTitle());   
           }
         });
         

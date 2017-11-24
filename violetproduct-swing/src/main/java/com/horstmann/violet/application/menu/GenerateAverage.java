@@ -17,7 +17,12 @@ public class GenerateAverage {
 	private int numObj;
 	
 	public GenerateAverage() {
-		readFile("stats/test1.txt");
+		readFile("stats/classStats1.txt");
+		createAverageWindow();
+	}
+	
+	public GenerateAverage(String path) {
+		readFile(path);
 		createAverageWindow();
 	}
 	

@@ -42,10 +42,20 @@ public class GeneratePieChart {
     }
     
     GeneratePieChart(){
-    	readFile("stats/test1.txt");
-    	createPieChart();
+    		readFile("stats/test1.txt");
+    		createPieChart();
     }
 	
+    GeneratePieChart(String path) {
+    		if (path.contains(".class.")) {
+    			readFile("stats/classStats1.txt");
+    			createPieChart();
+    		} else if (path.contains(".seq.")){
+    			readFile("stats/seqStats1.txt");
+    			createPieChart();
+    		}
+    }
+    
     public void readFile(String inFile){
         BufferedReader br = null;
         
