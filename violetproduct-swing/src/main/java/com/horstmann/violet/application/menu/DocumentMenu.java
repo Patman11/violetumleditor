@@ -67,7 +67,7 @@ public class DocumentMenu extends JMenu
           @Override
           public void actionPerformed(ActionEvent e)
           {
-        	  	GeneratePieChart pieChart = new GeneratePieChart(activeWorkspace.getTitle());   
+        	  	new GeneratePieChart(activeWorkspace.getTitle());   
           }
         });
         
@@ -79,7 +79,7 @@ public class DocumentMenu extends JMenu
         		@Override
         		public void actionPerformed(ActionEvent e)
         		{
-        			GenerateAverage avg = new GenerateAverage();
+        			new GenerateAverage(activeWorkspace.getTitle());
         		}
         });
         
@@ -104,8 +104,6 @@ public class DocumentMenu extends JMenu
              login.frame.setVisible(true);
           }
         });
-        
-       
     }
     
     

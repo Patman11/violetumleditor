@@ -6,10 +6,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 
 public class Login {
@@ -32,25 +34,25 @@ public class Login {
 	//Create the login window
 	private void createLogin() {
 		frame = new JFrame();
-		frame.setSize(500,500);
+		frame.setSize(200, 200);
 		frame.getContentPane().setLayout(null);
 		
-		JLabel userLabel = new JLabel("UserName:");
+		JLabel userLabel = new JLabel("UserName: ");
 		userLabel.setBounds(37, 26, 89, 27);
-		frame.getContentPane().add(userLabel);
+		frame.getContentPane().add(userLabel, BorderLayout.CENTER);
 		
-		JLabel passwordLabel = new JLabel("Password:");
+		JLabel passwordLabel = new JLabel("Password: ");
 		passwordLabel.setBounds(39, 75, 65, 21);
-		frame.getContentPane().add(passwordLabel);
+		frame.getContentPane().add(passwordLabel, BorderLayout.CENTER);
 		
 		userField = new JTextField();
 		userField.setBounds(99, 29, 86, 20);
-		frame.getContentPane().add(userField);
+		frame.getContentPane().add(userField, BorderLayout.CENTER);
 		userField.setColumns(10);
 		
-		passwordField = new JTextField();
+		passwordField = new JPasswordField();
 		passwordField.setBounds(99, 75, 86, 20);
-		frame.getContentPane().add(passwordField);
+		frame.getContentPane().add(passwordField, BorderLayout.CENTER);
 		passwordField.setColumns(10);
 		
 		JButton buttonLogin = new JButton("Login");

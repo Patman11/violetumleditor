@@ -48,10 +48,14 @@ public class GeneratePieChart {
 	
     GeneratePieChart(String path) {
     		if (path.contains(".class.")) {
-    			readFile("stats/classStats1.txt");
+    			int index = path.indexOf(".");
+    			String file = path.substring(0, index);
+    			readFile("stats/".concat(file.concat(".txt")));
     			createPieChart();
     		} else if (path.contains(".seq.")){
-    			readFile("stats/seqStats1.txt");
+    			int index = path.indexOf(".");
+    			String file = path.substring(0, index);
+    			readFile("stats/".concat(file.concat(".txt")));
     			createPieChart();
     		}
     }
@@ -67,7 +71,7 @@ public class GeneratePieChart {
             br = new BufferedReader(new FileReader(inFile));
             String str;
             
-            //read lines and put inforamtion into 3 different Lists
+            //read lines and put information into 3 different Lists
             while((str = br.readLine()) != null){
                 String tempName = str.substring(0, str.indexOf(":"));
                 nameObjects.add(tempName);
