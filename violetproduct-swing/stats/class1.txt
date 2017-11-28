@@ -1,4 +1,4 @@
-nozzle:2,0,0
+nozzle:2,0,6
 pump:4,0,1
 display:5,0,2
 car:5,0,0
