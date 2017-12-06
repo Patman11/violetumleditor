@@ -64,7 +64,7 @@ public class ConstraintVerifier {
     private boolean bidirectionalInheritanceEdge(IEdge e) {
         INode start = e.getStartNode(), end = e.getEndNode();
         return GRAPH_EDGES.stream().anyMatch((edge) -> (!edge.getId().equals(e.getId()) &&
-                e.getClass().equals(InheritanceEdge.class) &&
+                edge.getClass().equals(InheritanceEdge.class) &&
                 edge.getStartNode().getId().equals(end.getId()) &&
                 edge.getEndNode().getId().equals(start.getId())));
     }
