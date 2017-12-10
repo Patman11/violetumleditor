@@ -68,15 +68,29 @@ import com.horstmann.violet.framework.plugin.IDiagramPlugin;
 import com.horstmann.violet.framework.plugin.PluginRegistry;
 import com.horstmann.violet.framework.userpreferences.UserPreferencesService;
 import com.horstmann.violet.product.diagram.abstracts.IGraph;
+import com.horstmann.violet.product.diagram.abstracts.edge.IEdge;
+import com.horstmann.violet.product.diagram.abstracts.node.INode;
 import com.horstmann.violet.workspace.IWorkspace;
 import com.horstmann.violet.workspace.Workspace;
 import com.thoughtworks.xstream.io.StreamException;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.io.File;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 /**
  * Represents the file menu on the editor frame
@@ -85,6 +99,8 @@ import javax.swing.JTextField;
  */
 @ResourceBundleBean(resourceReference = MenuFactory.class)
 public class FileMenu extends JMenu {
+
+    AccountManager AM;
 
     /**
      * Default constructor
@@ -98,6 +114,7 @@ public class FileMenu extends JMenu {
         this.mainFrame = mainFrame;
         createMenu();
         addWindowsClosingListener();
+        AM = new AccountManager("accounts.txt");
     }
 
     /**
@@ -105,13 +122,6 @@ public class FileMenu extends JMenu {
      */
     public JMenu getFileNewMenu() {
         return this.fileNewMenu;
-    }
-
-    /**
-     * @return 'new file' menu
-     */
-    public JMenu getFileBUmlMenu() {
-        return this.fileBUmlMenu;
     }
 
     /**
@@ -125,7 +135,7 @@ public class FileMenu extends JMenu {
      * Initialize the menu
      */
     private void createMenu() {
-        initFileLoginItem();
+
         initFileNewMenu();
         initFileOpenItem();
         initFileCloseItem();
@@ -135,9 +145,9 @@ public class FileMenu extends JMenu {
         initFileExportMenu();
         initFilePrintItem();
         initFileExitItem();
-        initFileBUmlMenu();
+        initFileUserItem();
 
-        this.add(this.fileLoginItem);
+        this.add(this.fileUserItem);
         this.add(this.fileNewMenu);
         this.add(this.fileOpenItem);
         this.add(this.fileCloseItem);
@@ -147,7 +157,6 @@ public class FileMenu extends JMenu {
         this.add(this.fileExportMenu);
         this.add(this.filePrintItem);
         this.add(this.fileExitItem);
-        this.add(this.fileBUmlMenu);
 
     }
 
@@ -162,30 +171,140 @@ public class FileMenu extends JMenu {
         });
     }
 
-    /**
-     * Init Black UML menu entry
-     */
-    private void initFileBUmlMenu() {
+    private void initFileUserItem() {
+        initFileLoginItem();
+        initFileRegisterItem();
+        fileUserItem.add(this.fileLoginItem);
+        fileUserItem.add(this.fileRegisterItem);
+    }
 
+    private void initFileRegisterItem() {
+        this.fileRegisterItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JFrame loginFrame = new JFrame("Register");
+
+                JTextField user = new JTextField("");
+                JPasswordField pass = new JPasswordField("");
+                JButton loginButton = new JButton("Login");
+                pass.setSize(450, 50);
+                user.setSize(450, 50);
+
+                loginFrame.setLayout(new BorderLayout());
+                loginFrame.add(user, BorderLayout.NORTH);
+                loginFrame.add(pass, BorderLayout.CENTER);
+                loginFrame.add(loginButton, BorderLayout.SOUTH);
+
+                loginFrame.setSize(500, 300);
+
+                loginFrame.setVisible(true);
+
+                loginButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        String sLogin = user.getText();
+                        String sPass = pass.getText();
+
+                        //Then compare with some other string/data we already have in the user txt file
+                        if (AM.registerUser(sLogin, sPass)) {
+                            loginFrame.dispose();
+                        }
+                    }
+                });
+
+            }
+        });
+    }
+
+    private void initFileLogoutItem() {
+        this.fileLogoutItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                AM.logout();
+                fileUserItem.setText("Anonymous");
+                fileUserItem.remove(fileExportStatisticsItem);
+                fileUserItem.remove(fileLogoutItem);
+                fileUserItem.add(fileLoginItem);
+                fileUserItem.add(fileRegisterItem);
+            }
+        });
+    }
+
+    private void initExportStatisticsItem() {
+        this.fileExportStatisticsItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JFrame loginFrame = new JFrame("Exporting Statistics");
+
+                loginFrame.setLayout(new BorderLayout());
+                loginFrame.setSize(500, 300);
+                loginFrame.setVisible(true);
+                String filePath;
+                String fileName;
+                
+                int numOfClasses;
+                String classNames[];
+                
+                
+                
+                
+                IWorkspace workspace = mainFrame.getActiveWorkspace();
+                if (workspace != null) {
+                    IGraphFile graphFile = workspace.getGraphFile();
+                    fileName = graphFile.getFilename();
+                    filePath = graphFile.getDirectory();
+                    String path = filePath + "/" + fileName;//path to the open file
+                    
+                    File input = new File(path);
+                    try {
+                        Document doc = Jsoup.parse(input, "UTF-8", "http://example.com/");
+                        Elements nodes = doc.getElementById("1").getElementsByTag("ClassNode");
+                        numOfClasses = 0;
+                        for (Element node : nodes) {
+                            numOfClasses++;
+                        }
+                        System.out.println(numOfClasses);
+                        classNames = new String[numOfClasses];
+                        
+                        
+                        
+                        
+                        
+                        Element edges = doc.selectFirst("edges");
+                    } catch (IOException ex) {
+                        Logger.getLogger(FileMenu.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }
+
+            }
+        });
     }
 
     private void initFileLoginItem() {
+        initExportStatisticsItem();
+        initFileLogoutItem();
         this.fileLoginItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFrame loginFrame = new JFrame("Login");
 
-                JTextField user = new JTextField("Username");
-                JPasswordField pass = new JPasswordField("Password");
+                JTextField user = new JTextField("");
+                JPasswordField pass = new JPasswordField("");
                 JButton loginButton = new JButton("Login");
-                pass.setSize(450,50);
-                user.setSize(450,50);
+                pass.setSize(450, 50);
+                user.setSize(450, 50);
+
                 loginButton.addActionListener(new ActionListener() {
 
                     public void actionPerformed(ActionEvent e) {
-                        String sLogin = loginButton.getText();
+                        String sLogin = user.getText();
                         String sPass = pass.getText();
-                        //Then compare with some other string/data we already have in the user txt file
 
+                        //Then compare with some other string/data we already have in the user txt file
+                        if (AM.login(sLogin, sPass)) {
+                            fileUserItem.setText(sLogin);
+                            fileUserItem.add(fileExportStatisticsItem);
+                            fileUserItem.add(fileLogoutItem);
+                            fileUserItem.remove(fileLoginItem);
+                            fileUserItem.remove(fileRegisterItem);
+                            loginFrame.dispose();
+                        }
                     }
                 });
 
@@ -194,7 +313,7 @@ public class FileMenu extends JMenu {
                 loginFrame.add(pass, BorderLayout.CENTER);
                 loginFrame.add(loginButton, BorderLayout.SOUTH);
 
-                loginFrame.setSize(500,300);
+                loginFrame.setSize(500, 300);
 
                 loginFrame.setVisible(true);
             }
@@ -670,8 +789,11 @@ public class FileMenu extends JMenu {
     @ResourceBundleBean(key = "file.new")
     private JMenu fileNewMenu;
 
+    private JMenu fileUserItem = new JMenu("Anonymous");
+    private JMenuItem fileLogoutItem = new JMenuItem("Logout");
     private JMenuItem fileLoginItem = new JMenuItem("Login");
-    private JMenu fileBUmlMenu = new JMenu("Black UML");
+    private JMenuItem fileRegisterItem = new JMenuItem("Register");
+    private JMenuItem fileExportStatisticsItem = new JMenuItem("Export Statistics");
 
     @ResourceBundleBean(key = "file.open")
     private JMenuItem fileOpenItem;
